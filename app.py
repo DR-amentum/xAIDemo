@@ -10,7 +10,7 @@ from torchvision import transforms
 import requests
 
 # --- Configuration ---
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 MODEL_URL = "https://huggingface.co/cm93/resnet50-eurosat/resolve/main/pytorch_model.bin"
 EUROSAT_PATH = "./eurosat"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,11 +23,11 @@ model.load_state_dict(state_dict)
 model = model.to(device).eval()
 
 LAND_COVER_CLASSES = [
-    "Forest",
+    "SeaLake",
     "River",
     "Highway",
     "AnnualCrop",
-    "SeaLake",
+    "Forest",
     "HerbaceousVegetation",
     "Industrial",
     "Residential",
@@ -82,27 +82,39 @@ def compute_gradcam(cache, input_tensor):
     return cam
 
 def explain_prediction(class_name, confidence, probs):
-    summary = "\n".join(f"{LAND_COVER_CLASSES[i]}: {probs[i]*100:.2f}%" for i in range(len(probs)))
     prompt = (
-        f"The model predicted: '{class_name}' with {confidence*100:.2f}% confidence.\n"
-        f"Here are the class probabilities:\n{summary}\n"
-        f"Why might the model have predicted '{class_name}'?"
+        f"You are an AI assistant explaining the output of a ResNet50 model fine-tuned on the EuroSAT dataset "
+        f"for land cover classification. The model received a satellite image and predicted the class '{class_name}' "
+        f"with {confidence*100:.2f}% confidence.\n\n"
+        f"Class probabilities:\n" +
+        "\n".join(f"{LAND_COVER_CLASSES[i]}: {probs[i]*100:.2f}%" for i in range(len(probs))) +
+        "\n\n"
+        "Explain why the model likely predicted this class, based on visual features such as vegetation patterns, "
+        "water bodies, urban structures, or agricultural layout. Keep it concise but insightful."
     )
     try:
         r = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"},
             json={
-                "model": "mistralai/mistral-7b-instruct",
-                "messages": [{"role": "system", "content": "Explain remote sensing results simply."},
-                             {"role": "user", "content": prompt}],
+                "model": "mistralai/mistral-small-3.1-24b-instruct:free",
+                "messages": [
+                    {"role": "system", "content": "You are a helpful assistant that explains satellite image classifications from a ResNet50 model trained on the EuroSAT dataset. Focus on visual evidence from the image and known land cover patterns."},
+                    {"role": "user", "content": prompt}
+                ],
                 "max_tokens": 400
             },
             timeout=30
         )
-        return r.json()["choices"][0]["message"]["content"].strip()
+        response_json = r.json()
+        if "choices" in response_json:
+            return response_json["choices"][0]["message"]["content"].strip()
+        else:
+            return f"[LLM error] Response did not contain 'choices': {response_json}"
     except Exception as e:
         return f"[LLM error] {e}"
+
+
 
 # --- Dataset Loading ---
 def get_gallery_images_by_category(root=EUROSAT_PATH):
@@ -165,7 +177,7 @@ def classify_random_image(category):
 def handle_chat(user_msg, chat_history):
     if not user_msg:
         return chat_history, ""
-    reply = f"Echo: {user_msg}"  
+    reply = f"Echo: {user_msg}"  # Replace with actual LLM reply if needed
     updated = chat_history + f"\nUser: {user_msg}\nAssistant: {reply}"
     return updated, ""
 
