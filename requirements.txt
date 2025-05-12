@@ -1,0 +1,10 @@
+gradio==3.50.2
+pydantic==1.10.13
+numpy==1.26.4
+matplotlib==3.8.4
+Pillow==10.3.0
+torch==2.2.0+cu121
+torchvision==0.17.0+cu121
+transformers==4.39.0
+requests==2.31.0
+--extra-index-url https://download.pytorch.org/whl/cu121
