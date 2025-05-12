@@ -165,7 +165,7 @@ def classify_random_image(category):
 def handle_chat(user_msg, chat_history):
     if not user_msg:
         return chat_history, ""
-    reply = f"Echo: {user_msg}"  # Replace with actual LLM reply if needed
+    reply = f"Echo: {user_msg}"  
     updated = chat_history + f"\nUser: {user_msg}\nAssistant: {reply}"
     return updated, ""
 
