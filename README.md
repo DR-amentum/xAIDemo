@@ -25,7 +25,7 @@ docker build -t eurosat-app .
 docker run -p 7860:7860 eurosat-app
 ```
 
-###🧑‍💻 Manual (Python)
+### 🧑‍💻 Manual (Python)
 Install dependencies:
 
 ```bash
