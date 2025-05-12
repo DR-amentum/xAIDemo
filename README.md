@@ -23,3 +23,12 @@ Build and run with Docker:
 ```bash
 docker build -t eurosat-app .
 docker run -p 7860:7860 eurosat-app
+```
+
+###🧑‍💻 Manual (Python)
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
