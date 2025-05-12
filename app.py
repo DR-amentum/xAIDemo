@@ -10,7 +10,7 @@ from torchvision import transforms
 import requests
 
 # --- Configuration ---
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "ADD-OPENROUTER-API-KEY-HERE"
 MODEL_URL = "https://huggingface.co/cm93/resnet50-eurosat/resolve/main/pytorch_model.bin"
 EUROSAT_PATH = "./eurosat"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
