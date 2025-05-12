@@ -22,7 +22,7 @@ Build and run with Docker:
 
 ```bash
 docker build -t eurosat-app .
-docker run -p 7860:7860 eurosat-app
+docker run --gpus all -p 7860:7860 eurosat-app
 ```
 
 ### 🧑‍💻 Manual (Python)
