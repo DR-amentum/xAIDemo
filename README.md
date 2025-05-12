@@ -16,6 +16,9 @@ The app visualises model predictions with Grad-CAM and even explains them using 
 
 ## 🚀 Getting Started
 
+Obtain a free Openrouter API key
+Update app.py with key OPENROUTER_API_KEY = "ADD-OPENROUTER-API-KEY-HERE"
+
 ### 🐳 Docker (Recommended)
 
 Build and run with Docker:
